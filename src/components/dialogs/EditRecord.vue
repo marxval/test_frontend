@@ -1,23 +1,18 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" dark v-bind="attrs" v-on="on">
-          OpenpunchOutalog
-        </v-btn>
-      </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">Record</span>
+          <span class="text-h5">Record: {{ date }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
               <v-row align="center" justify="center" class="pa-6">
                 <v-btn-toggle
-                  v-model="punchOut"
+                  v-model="isOutSelected"
                   mandatory
-                  v-bind:color="punchOut ? 'red' : 'green'"
+                  v-bind:color="isOutSelected ? 'red' : 'green'"
                 >
                   <v-btn>
                     <span>Punch In: {{ punchInValue }}</span>
@@ -32,7 +27,7 @@
                   <v-time-picker
                     elevation="1"
                     v-model="timePicker"
-                    v-bind:color="punchOut ? 'red' : 'green'"
+                    v-bind:color="isOutSelected ? 'red' : 'green'"
                   ></v-time-picker>
                 </div>
               </v-col>
@@ -41,10 +36,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="grey darken-1" text @click="dialog = false">
-            Close
-          </v-btn>
-          <v-btn color="green darken-1" text @click="dialog = false">
+          <v-btn color="grey darken-1" text @click="closeModal"> Close </v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="updateRecord(record._id, punchInValue, punchOutValue, date)"
+          >
             Save
           </v-btn>
         </v-card-actions>
@@ -56,24 +53,46 @@
 <script>
 export default {
   name: "EditRecord",
+  props: ["record"],
   data: () => ({
-    dialog: true,
-    punchOut: undefined,
-    punchInValue: "6:00",
-    punchOutValue: "19:00",
-    timePicker: "6:00",
+    dialog: false,
+    isOutSelected: undefined,
+    punchInValue: undefined,
+    punchOutValue: undefined,
+    date: undefined,
+    timePicker: undefined,
   }),
+  methods: {
+    closeModal() {
+      this.buttonDisabled = true;
+      this.$emit("closeModal");
+    },
+    updateRecord(id, punchInValue, punchOutValue, date) {
+      this.$emit("updateRecord", id, punchInValue, punchOutValue, date);
+      this.dialog = false;
+      this.buttonDisabled = true;
+    },
+  },
   watch: {
-    // whenever question changes, this function will run
     timePicker(newTime) {
-      if (this.punchOut) {
+      if (this.isOutSelected) {
         this.punchOutValue = newTime;
       } else {
         this.punchInValue = newTime;
       }
     },
-    punchOut(punchOut) {
-      this.timePicker = punchOut ? this.punchOutValue : this.punchInValue;
+    isOutSelected(isOutSelected) {
+      this.timePicker = isOutSelected ? this.punchOutValue : this.punchInValue;
+    },
+    record(newRecord) {
+      this.dialog = newRecord ? true : false;
+      if (newRecord) {
+        const { punchIn, punchOut } = newRecord;
+        this.punchInValue = punchIn;
+        this.punchOutValue = punchOut;
+        this.timePicker = this.isOutSelected ? punchOut : punchIn;
+        this.date = newRecord.date;
+      }
     },
   },
 };
