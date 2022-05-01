@@ -1,40 +1,66 @@
 <template>
-  <v-container>
-    <v-row class="text-right">
-      <v-col xs="12" sm="6" md="4">
-        <v-card elevation="2" outlined shaped>
-          <v-card-title>
-            <div class="mr-2">
-              <v-icon large>mdi-account-circle</v-icon>
-            </div>
-            <span class="font-weight-bold"> mxmghost </span>
-          </v-card-title>
-          <v-card-text>
-            <span class="font-weight-bold text-body-1"> ID: 001 </span>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn class="ma-2" small fab color="indigo">
-              <v-icon color="white">mdi-account-details</v-icon>
-            </v-btn>
-
-            <v-btn class="ma-2" small fab color="error">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row class="text-center">
-      <v-col xs="12">
-        <v-pagination v-model="page" :length="2" circle></v-pagination>
-      </v-col>
-    </v-row>
+  <v-container style="height: 80vh">
+    <template v-if="loading">
+      <v-layout fill-height class="d-flex justify-center align-center pa-2">
+        <v-progress-circular
+          :size="120"
+          :width="12"
+          color="indigo"
+          indeterminate
+        ></v-progress-circular>
+      </v-layout>
+    </template>
+    <div v-else-if="!error">
+      <v-row class="text-right">
+        <UserCard
+          @openDeleteModal="toggleModal"
+          v-for="user in users"
+          :key="user._id"
+          :username="user.username"
+          :id="user.id"
+          :globalId="user._id"
+        />
+      </v-row>
+    </div>
+    <WarningDialog
+      @closeModal="toggleModal(undefined)"
+      @deleteGlobalUser="deleteUser"
+      :userId="userToDelete"
+    />
   </v-container>
 </template>
 
 <script>
+import UserCard from "./UserCard";
+import WarningDialog from "./dialogs/WarningDialog";
+
 export default {
   name: "UserList",
+  data: () => ({
+    page: 1,
+    userToDelete: {
+      id: undefined,
+      globalId: undefined,
+    },
+  }),
+  props: ["users", "error", "loading"],
+  components: {
+    UserCard,
+    WarningDialog,
+  },
+  methods: {
+    toggleModal(id) {
+      this.userToDelete = {
+        ...id,
+      };
+    },
+    deleteUser(id) {
+      this.userToDelete = {
+        id: undefined,
+        globalId: undefined,
+      };
+      this.$emit("deleteUser", id);
+    },
+  },
 };
 </script>

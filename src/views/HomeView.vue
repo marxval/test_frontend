@@ -1,40 +1,27 @@
 <template>
-  <v-app>
-    <v-app-bar app dark>
-      <div class="d-flex align-center">
-        <div class="mr-2 d-none d-sm-flex">
-          <v-icon x-large>mdi-hours-24</v-icon>
-        </div>
-
-        <span class="text-sm-body-2 text-md-h5 font-weight-bold"
-          >User Records System</span
-        >
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <v-icon large>mdi-github</v-icon>
-      </v-btn>
-    </v-app-bar>
-
-    <v-main>
-      <router-view class="view"></router-view>
-    </v-main>
-  </v-app>
+  <div>
+    <UploadFile @getUsers="getUsers" />
+    <UserList
+      @deleteUser="deleteUser"
+      :users="users"
+      :error="error"
+      :loading="loading"
+    />
+  </div>
 </template>
 
 <script>
+import UserList from "../components/UserList";
+import UploadFile from "../components/UploadFile";
 import axios from "axios";
 
 export default {
-  name: "App",
+  name: "HomeView",
 
-  components: {},
+  components: {
+    UserList,
+    UploadFile,
+  },
 
   mounted() {
     this.getUsers();
