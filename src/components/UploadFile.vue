@@ -45,7 +45,7 @@ export default {
       const formData = new FormData();
       formData.append("file", file, file.name);
 
-      await fetch("http://localhost:3004/file/upload", {
+      await fetch("https://test-keyence.herokuapp.com/file/upload", {
         method: "POST",
         body: formData,
       });

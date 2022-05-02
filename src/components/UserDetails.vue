@@ -80,7 +80,7 @@ export default {
       this.loadingDelete = true;
       try {
         await axios.delete(
-          `http://localhost:3004/user/${this.user._id}/records/${id}`
+          `https://test-keyence.herokuapp.com/user/${this.user._id}/records/${id}`
         );
         this.$emit("refetchRecords");
       } catch (error) {
@@ -93,7 +93,7 @@ export default {
       this.loadingDelete = true;
       try {
         await axios.patch(
-          `http://localhost:3004/user/${this.user._id}/records/${id}`,
+          `https://test-keyence.herokuapp.com/user/${this.user._id}/records/${id}`,
           { punchIn, punchOut, date }
         );
         this.$emit("refetchRecords");

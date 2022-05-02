@@ -2,26 +2,32 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title>
+        <v-card-title v-if="$vuetify.breakpoint.smAndUp">
           <span class="text-h5">Record: {{ date }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-row align="center" justify="center" class="pa-6">
+              <v-col cols="12" class="d-flex justify-center pa-6">
                 <v-btn-toggle
                   v-model="isOutSelected"
                   mandatory
                   v-bind:color="isOutSelected ? 'red' : 'green'"
                 >
                   <v-btn>
-                    <span>Punch In: {{ punchInValue }}</span>
+                    <span
+                      >Punch In <br />
+                      {{ punchInValue }}</span
+                    >
                   </v-btn>
                   <v-btn>
-                    <span>Punch Out: {{ punchOutValue }}</span>
+                    <span
+                      >Punch Out <br />
+                      {{ punchOutValue }}</span
+                    >
                   </v-btn>
                 </v-btn-toggle>
-              </v-row>
+              </v-col>
               <v-col cols="12" class="d-flex justify-center">
                 <div class="reserved">
                   <v-time-picker

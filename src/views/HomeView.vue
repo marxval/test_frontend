@@ -30,7 +30,7 @@ export default {
     async getUsers() {
       this.loading = true;
       try {
-        const res = await axios.get("http://localhost:3004/user");
+        const res = await axios.get("https://test-keyence.herokuapp.com/user");
         this.users = res.data.results;
       } catch (error) {
         this.error = true;
@@ -41,7 +41,7 @@ export default {
     async deleteUser(id) {
       this.loading = true;
       try {
-        await axios.delete(`http://localhost:3004/user/${id}`);
+        await axios.delete(`https://test-keyence.herokuapp.com/user/${id}`);
         this.getUsers();
       } catch (error) {
         this.error = true;

@@ -51,25 +51,29 @@ export default {
     backToHome() {
       this.$router.push(`/`);
     },
+    getPunchDateFormat(val) {
+      return new Date(val).toISOString().split("T")[1].split(".")[0];
+    },
+    getDateFormat(val) {
+      return new Date(val).toISOString().split("T")[0];
+    },
     async getUserRecords(id) {
       this.loading = true;
       try {
-        const res = await axios.get(`http://localhost:3004/user/${id}/records`);
+        const res = await axios.get(
+          `https://test-keyence.herokuapp.com/user/${id}/records`
+        );
         const { user, records } = res.data.results;
         this.user = user;
         const recordsWithLocalDate = records.map((props) => {
           const { date, punchIn, punchOut } = props;
-          const recordDate = new Date(date);
-          const punchInDate = new Date(punchIn).toLocaleTimeString();
-          const punchOutDate = new Date(punchOut).toLocaleTimeString();
-
-          const simpleDate = `${
-            recordDate.getMonth() + 1
-          }/${recordDate.getDate()}/${recordDate.getFullYear()}`;
+          const recordDate = this.getDateFormat(date);
+          const punchOutDate = this.getPunchDateFormat(punchOut);
+          const punchInDate = this.getPunchDateFormat(punchIn);
 
           return {
             ...props,
-            date: simpleDate,
+            date: recordDate,
             punchIn: punchInDate,
             punchOut: punchOutDate,
           };
