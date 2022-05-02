@@ -21,17 +21,34 @@
         <v-icon large right> mdi-microsoft-excel </v-icon>
       </v-btn>
     </div>
+    <div class="errorAlert">
+      <v-alert
+        v-model="error"
+        border="right"
+        color="red"
+        dense
+        outlined
+        dismissible
+        text
+        type="error"
+        class="error-alert"
+        elevation="3"
+      >
+        Could not complete your petition
+      </v-alert>
+    </div>
   </v-container>
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 
 export default {
   name: "UploadFile",
   data() {
     return {
       uploadingFile: false,
+      error: false,
     };
   },
   methods: {
@@ -45,12 +62,29 @@ export default {
       const formData = new FormData();
       formData.append("file", file, file.name);
 
-      await fetch("https://test-keyence.herokuapp.com/file/upload", {
-        method: "POST",
-        body: formData,
-      });
-      this.$emit("getUsers");
+      try {
+        await axios({
+          url: "https://test-keyence.herokuapp.com/file/upload",
+          method: "POST",
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        this.$emit("getUsers");
+      } catch (error) {
+        this.error = true;
+        setTimeout(() => {
+          this.error = false;
+        }, 3000);
+      }
     },
   },
 };
 </script>
+<style>
+.error-alert {
+  max-width: 80vw;
+  position: absolute;
+  bottom: 0;
+  right: 15px;
+}
+</style>
